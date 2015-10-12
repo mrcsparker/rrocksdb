@@ -1,3 +1,5 @@
 # rrocksdb
 
-rocksdb wrapper for R
+Initial checkin of a RocksDB (http://rocksdb.org) wrapper for R.
+
+
