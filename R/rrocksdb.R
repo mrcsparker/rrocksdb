@@ -4,29 +4,17 @@
 #   Check Package:             'Cmd + Shift + E'
 #   Test Package:              'Cmd + Shift + T'
 
-library(R6)
+loadModule("rrocksdb", TRUE)
 
-DB = R6Class("DB",
-  public = list(
+sample_load <- function() {
 
-    db_name = NA,
-    db = NA,
+  db <- new(rrocksdb::DB, "/tmp/foo.db")
+  db$put("name", "Bar")
+  print(db$get("name"))
 
-    initialize = function(name) {
-      self$db_name <- name
-      self$db <- rrocksdb_new(name)
-    },
+  batch <- new(rrocksdb::WriteBatch)
+  batch$put("name", "Chris")
 
-    put = function(key, value) {
-      rrocksdb_put(self$db, key, value)
-    },
+  db$write(batch)
 
-    get = function(key) {
-      rrocksdb_get(self$db, key)
-    },
-
-    delete = function(key) {
-      rrocksdb_delete(self$db, key)
-    }
-  )
-)
+}

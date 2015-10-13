@@ -1,3 +1,4 @@
 exportPattern("^[[:alpha:]]+")
-importFrom(Rcpp, evalCpp)
+#importFrom(Rcpp, evalCpp)
+import(methods,Rcpp,RApiSerialize)
 useDynLib(rrocksdb)
