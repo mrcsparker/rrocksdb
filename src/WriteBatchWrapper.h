@@ -4,9 +4,9 @@
 #include <Rcpp.h>
 #include "rocksdb/db.h"
 
-class WriteBatch {
+class WriteBatchWrapper {
 public:
-  WriteBatch();
+  WriteBatchWrapper();
 
   void put(std::string& key, std::string& value);
 
@@ -20,12 +20,12 @@ public:
 
   rocksdb::WriteBatch* getBatch();
 
-  ~WriteBatch();
+  ~WriteBatchWrapper();
 
 private:
   rocksdb::WriteBatch* _batch;
 };
 
-RCPP_EXPOSED_CLASS(WriteBatch)
+RCPP_EXPOSED_CLASS(WriteBatchWrapper)
 
 #endif /* __WRITE_BATCH_H__ */

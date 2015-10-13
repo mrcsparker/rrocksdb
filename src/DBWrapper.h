@@ -2,29 +2,34 @@
 #define __DB_H__
 
 #include <Rcpp.h>
-#include "rocksdb/db.h"
-#include "Iterator.h"
-#include "WriteBatch.h"
 
-class DB {
+#include "rocksdb/db.h"
+#include "IteratorWrapper.h"
+#include "WriteBatchWrapper.h"
+
+using namespace rocksdb;
+
+class DBWrapper {
 public:
 
   // open
-  DB(const std::string& dbName);
+  DBWrapper(const std::string& dbName);
+
+  Status createColumnFamily(std::string& name);
 
   std::string put(const std::string& key, const std::string& value);
 
   std::string remove(const std::string& key);
 
-  void write(WriteBatch& batch);
+  void write(WriteBatchWrapper& batch);
 
   std::string get(const std::string& key);
 
-  Iterator* newIterator();
+  IteratorWrapper* newIterator();
 
   std::string getName();
 
-  ~DB();
+  ~DBWrapper();
 
 private:
   rocksdb::DB* _db;

@@ -4,9 +4,9 @@
 #include <Rcpp.h>
 #include "rocksdb/db.h"
 
-class Iterator {
+class IteratorWrapper {
 public:
-  Iterator(rocksdb::Iterator *iterator);
+  IteratorWrapper(rocksdb::Iterator *iterator);
 
   bool valid();
 
@@ -26,12 +26,12 @@ public:
 
   // virtual Status status() const = 0;
 
-  ~Iterator();
+  ~IteratorWrapper();
 
 private:
   rocksdb::Iterator* _iterator;
 };
 
-RCPP_EXPOSED_CLASS(Iterator)
+RCPP_EXPOSED_CLASS(IteratorWrapper)
 
 #endif /* __ITERATOR_H__ */

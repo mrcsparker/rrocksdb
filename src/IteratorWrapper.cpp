@@ -1,43 +1,43 @@
-#include "Iterator.h"
+#include "IteratorWrapper.h"
 
-Iterator::Iterator(rocksdb::Iterator *iterator) {
+IteratorWrapper::IteratorWrapper(rocksdb::Iterator *iterator) {
   _iterator = iterator;
   _iterator->SeekToFirst();
 }
 
-bool Iterator::valid() {
+bool IteratorWrapper::valid() {
   return _iterator->Valid();
 }
 
-void Iterator::seekToFirst() {
+void IteratorWrapper::seekToFirst() {
   _iterator->SeekToFirst();
 }
 
-void Iterator::seekToLast() {
+void IteratorWrapper::seekToLast() {
   _iterator->SeekToLast();
 }
 
 // virtual void Seek(const Slice& target) = 0;
 
-void Iterator::next() {
+void IteratorWrapper::next() {
   _iterator->Next();
 }
 
-void Iterator::prev() {
+void IteratorWrapper::prev() {
   _iterator->Prev();
 }
 
-std::string Iterator::key() {
+std::string IteratorWrapper::key() {
   return _iterator->key().ToString();
 }
 
-std::string Iterator::value() {
+std::string IteratorWrapper::value() {
   return _iterator->value().ToString();
 }
 
 // virtual Status status() const = 0;
 
-Iterator::~Iterator() {
+IteratorWrapper::~IteratorWrapper() {
   delete _iterator;
 }
 

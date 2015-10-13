@@ -27,6 +27,8 @@ run_rrocksdb <- function() {
     print(paste(iterator$key, " : ", iterator$value))
     iterator$move_next()
   }
+
+  s <- db$create_column_family("column_family")
 }
 
 sample_load <- function() {
