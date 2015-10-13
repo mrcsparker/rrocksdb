@@ -5,7 +5,7 @@ Initial checkin of a RocksDB (http://rocksdb.org) wrapper for R.
 ```R
 loadModule("rrocksdb", TRUE)
 
-run_rrocksdb <- function() {
+runRRocksDB <- function() {
 
   db <- new(rrocksdb::DB, "/tmp/foo.db")
   print(db)
@@ -24,13 +24,14 @@ run_rrocksdb <- function() {
 
   while (iterator$valid()) {
     print(paste(iterator$key, " : ", iterator$value))
-    iterator$move_next()
+    iterator$moveNext()
   }
+
+  s <- db$createColumnFamily("column_family")
 }
 
-sample_load <- function() {
-  run_rrocksdb()
+sampleLoad <- function() {
+  runRRocksDB()
   invisible(gc())
 }
-
 ```
