@@ -35,6 +35,42 @@ private:
 
 RCPP_EXPOSED_CLASS(WriteBatch)
 
+class Iterator {
+public:
+  Iterator(rocksdb::Iterator *iterator) {
+    _iterator = iterator;
+    _iterator->SeekToFirst();
+  }
+
+  void seekToFirst() {
+    _iterator->SeekToFirst();
+  }
+
+  bool valid() {
+    return _iterator->Valid();
+  }
+
+  void next() {
+    _iterator->Next();
+  }
+
+  std::string key() {
+    return _iterator->key().ToString();
+  }
+
+  std::string value() {
+    return _iterator->value().ToString();
+  }
+
+  ~Iterator() {
+    delete _iterator;
+  }
+private:
+  rocksdb::Iterator* _iterator;
+};
+
+RCPP_EXPOSED_CLASS(Iterator)
+
 class DB {
 public:
   DB(const std::string& dbName) {
@@ -47,7 +83,9 @@ public:
     // open DB
     rocksdb::Status s = rocksdb::DB::Open(options, dbName, &_db);
 
-    assert(s.ok());
+    if (!s.ok()) {
+      throw std::runtime_error(s.ToString());
+    }
   }
 
   std::string put(const std::string& key, const std::string& value) {
@@ -73,6 +111,10 @@ public:
     _db->Write(rocksdb::WriteOptions(), batch.getBatch());
   }
 
+  Iterator* newIterator() {
+    return new Iterator(_db->NewIterator(rocksdb::ReadOptions()));
+  }
+
   ~DB() {
     delete _db;
   }
@@ -93,6 +135,7 @@ RCPP_MODULE(rrocksdb) {
   .method("remove", &DB::remove, "Remove data from RocksDB")
   .method("rm", &DB::remove, "Remove data from RocksDB")
   .method("write", &DB::write, "Write batch data")
+  .method("iterator", &DB::newIterator, "Create iterator")
   ;
 
   Rcpp::class_<WriteBatch>("WriteBatch")
@@ -100,5 +143,14 @@ RCPP_MODULE(rrocksdb) {
   .method("put", &WriteBatch::put, "Put onto batch")
   .method("rm", &WriteBatch::remove, "Remove from batch")
   .method("remove", &WriteBatch::remove, "Remove from batch")
+  ;
+
+  Rcpp::class_<Iterator>("Iterator")
+  .method("seekToFirst", &Iterator::seekToFirst)
+  .method("seek_to_first", &Iterator::seekToFirst)
+  .method("valid", &Iterator::valid)
+  .method("move_next", &Iterator::next)
+  .property("key", &Iterator::key)
+  .property("value", &Iterator::value)
   ;
 }
