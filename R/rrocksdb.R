@@ -6,6 +6,8 @@
 
 loadModule("rrocksdb", TRUE)
 
+require(randomNames)
+
 runRRocksDB <- function() {
 
   db <- new(rrocksdb::DB, "/tmp/foo.db")
@@ -43,25 +45,24 @@ fakeCSV <- function() {
   options$setFixedPrefixTransform(10)
 
   db <- new(rrocksdb::DB, "/tmp/csv.db", options)
+  db$createColumnFamily("csv")
+  db$createColumnFamily("csv_metadata")
 
   print("loaded")
 
-  db$put("1/id", "1")
-  db$put("1/first_name", "Chris")
-  db$put("1/last_name", "Parker")
-
-  db$put("2/id", "2")
-  db$put("2/first_name", "John")
-  db$put("2/last_name", "Doe")
-
-  db$put("3/id", "3")
-  db$put("3/first_name", "Jane")
-  db$put("3/last_name", "Doe")
+  for (i in 1:100) {
+    name = unlist(strsplit(randomNames::randomNames(), ","))
+    db$putCF("csv", paste(toString(i), ":", "1", ":", "id", sep = ""), toString(i))
+    db$putCF("csv", paste(toString(i), ":", "2", ":","first_name", sep = ""), name[2])
+    db$putCF("csv", paste(toString(i), ":", "3", ":", "last_name", sep = ""), name[1])
+  }
 
   iterator <- db$iterator()
-  iterator$seek("2/")
+  iterator$seek("1:")
   while (iterator$valid()) {
-    print(paste(iterator$key, " : ", iterator$value))
+    if (match(iterator$key, "(.*):(.*):last_name") && match(iterator$value, "Lee")) {
+      print(paste(iterator$key, ":", iterator$value))
+    }
     iterator$moveNext()
   }
 }

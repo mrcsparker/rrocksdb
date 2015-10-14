@@ -24,11 +24,17 @@ public:
 
   std::string put(const std::string& key, const std::string& value);
 
+  std::string putWithColumnFamily(const std::string& columnFamilyName, const std::string& key, const std::string& value);
+
   Status remove(const std::string& key);
+
+  Status removeWithColumnFamily(const std::string& columnFamilyName, const std::string& key);
 
   void write(WriteBatchWrapper& batch);
 
   std::string get(const std::string& key);
+
+  std::string getWithColumnFamily(const std::string& columnFamilyName, const std::string& key);
 
   IteratorWrapper* newIterator();
 
@@ -37,7 +43,11 @@ public:
   ~DBWrapper();
 
 private:
+
+  rocksdb::ColumnFamilyHandle* _getColumnFamilyHandle(const std::string& columnFamilyName);
+
   rocksdb::DB* _db;
+  std::unordered_map<std::string, rocksdb::ColumnFamilyHandle *> _columnFamilies;
 };
 
 

@@ -1,9 +1,16 @@
 #include <Rcpp.h>
+#include <regex>
 #include "rrocksdb_types.h"
 
 using namespace Rcpp;
 
 // [[Rcpp::plugins(cpp11)]]
+
+// [[Rcpp::export]]
+bool match(std::string s, std::string m) {
+  std::regex reg(m);
+  return std::regex_match(s, reg);
+}
 
 RCPP_MODULE(rrocksdb) {
 
@@ -44,10 +51,18 @@ RCPP_MODULE(rrocksdb) {
   .constructor<std::string>()
   .method("createColumnFamily", &DBWrapper::createColumnFamily)
   .method("put", &DBWrapper::put, "Put data into RocksDB")
+  .method("putWithColumnFamily", &DBWrapper::putWithColumnFamily, "Put data into RocksDB")
+  .method("putCF", &DBWrapper::putWithColumnFamily, "Put data into RocksDB")
   .method("remove", &DBWrapper::remove, "Remove data from RocksDB")
+  .method("removeWithColumnFamily", &DBWrapper::removeWithColumnFamily, "Remove data from RocksDB")
+  .method("removeCF", &DBWrapper::removeWithColumnFamily, "Remove data from RocksDB")
   .method("rm", &DBWrapper::remove, "Remove data from RocksDB")
+  .method("rmWithColumnFamily", &DBWrapper::removeWithColumnFamily, "Remove data from RocksDB")
+  .method("rmCF", &DBWrapper::removeWithColumnFamily, "Remove data from RocksDB")
   .method("write", &DBWrapper::write, "Write batch data")
   .method("get", &DBWrapper::get, "Get data from RocksDB")
+  .method("getWithColumnFamily", &DBWrapper::getWithColumnFamily, "Get data from RocksDB")
+  .method("getCF", &DBWrapper::getWithColumnFamily, "Get data from RocksDB")
   .method("iterator", &DBWrapper::newIterator, "Create iterator")
   .method("getName", &DBWrapper::getName)
   ;

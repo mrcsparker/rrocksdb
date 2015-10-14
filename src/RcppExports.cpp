@@ -6,3 +6,15 @@
 
 using namespace Rcpp;
 
+// match
+bool match(std::string s, std::string m);
+RcppExport SEXP rrocksdb_match(SEXP sSEXP, SEXP mSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< std::string >::type s(sSEXP);
+    Rcpp::traits::input_parameter< std::string >::type m(mSEXP);
+    __result = Rcpp::wrap(match(s, m));
+    return __result;
+END_RCPP
+}

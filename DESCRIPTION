@@ -10,4 +10,4 @@ LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.1)
 LinkingTo:
-    Rcpp, RApiSerialize
+    Rcpp, RApiSerialize, randomNames

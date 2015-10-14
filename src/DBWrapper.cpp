@@ -14,11 +14,15 @@ DBWrapper::DBWrapper(const std::string& dbName, OptionsWrapper& options) {
   std::vector<rocksdb::ColumnFamilyDescriptor> columnFamilyDescriptors;
 
   for (auto const& cf : tmpCf) {
-    columnFamilyDescriptors.push_back(rocksdb::ColumnFamilyDescriptor(cf, rocksdb::ColumnFamilyOptions()));
+    columnFamilyDescriptors.push_back(ColumnFamilyDescriptor(cf, rocksdb::ColumnFamilyOptions()));
   }
 
   std::vector<rocksdb::ColumnFamilyHandle *> columnFamilyHandles;
   s = rocksdb::DB::Open(options.getOptions(), dbName, columnFamilyDescriptors, &columnFamilyHandles, &_db);
+
+  for (auto const& cfh : columnFamilyHandles) {
+    _columnFamilies.emplace(cfh->GetName(), cfh);
+  }
 
   if (!s.ok()) {
     throw std::runtime_error(s.ToString());
@@ -31,9 +35,16 @@ DBWrapper::DBWrapper(const std::string& dbName) {
 }
 
 Status DBWrapper::createColumnFamily(std::string& name) {
+
+  if (_columnFamilies[name] != nullptr) {
+    return rocksdb::Status();
+  }
+
   rocksdb::ColumnFamilyHandle* cf;
   rocksdb::Status s = _db->CreateColumnFamily(rocksdb::ColumnFamilyOptions(), name, &cf);
-  delete cf;
+
+  _columnFamilies.emplace(cf->GetName(), cf);
+
   return s;
 }
 
@@ -51,7 +62,20 @@ std::string DBWrapper::put(const std::string& key, const std::string& value) {
   return value;
 }
 
+std::string DBWrapper::putWithColumnFamily(const std::string& columnFamilyName, const std::string& key, const std::string& value) {
+  ColumnFamilyHandle *cfh = _getColumnFamilyHandle(columnFamilyName);
+
+  rocksdb::Status s = _db->Put(rocksdb::WriteOptions(), cfh, key, value);
+  assert(s.ok());
+  return value;
+}
+
 Status DBWrapper::remove(const std::string& key) {
+  rocksdb::Status s = _db->Delete(rocksdb::WriteOptions(), key);
+  return s;
+}
+
+Status DBWrapper::removeWithColumnFamily(const std::string& columnFamilyName, const std::string& key) {
   rocksdb::Status s = _db->Delete(rocksdb::WriteOptions(), key);
   return s;
 }
@@ -67,6 +91,15 @@ std::string DBWrapper::get(const std::string& key) {
   return value;
 }
 
+std::string DBWrapper::getWithColumnFamily(const std::string& columnFamilyName, const std::string& key) {
+  ColumnFamilyHandle *cfh = _getColumnFamilyHandle(columnFamilyName);
+
+  std::string value;
+  rocksdb::Status s = _db->Get(rocksdb::ReadOptions(), cfh, key, &value);
+  assert(s.ok());
+  return value;
+}
+
 IteratorWrapper* DBWrapper::newIterator() {
   return new IteratorWrapper(_db->NewIterator(rocksdb::ReadOptions()));
 }
@@ -76,6 +109,15 @@ std::string DBWrapper::getName() {
 }
 
 DBWrapper::~DBWrapper() {
+
+  for (auto& cfs : _columnFamilies) {
+    delete cfs.second;
+  }
+
   delete _db;
+}
+
+rocksdb::ColumnFamilyHandle* DBWrapper::_getColumnFamilyHandle(const std::string& columnFamilyName) {
+  return _columnFamilies[columnFamilyName];
 }
 
