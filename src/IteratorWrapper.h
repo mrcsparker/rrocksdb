@@ -14,7 +14,7 @@ public:
 
   void seekToLast();
 
-  // virtual void Seek(const Slice& target) = 0;
+  void seek(std::string& query);
 
   void next();
 

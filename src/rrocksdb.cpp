@@ -11,6 +11,18 @@ RCPP_MODULE(rrocksdb) {
 
   using namespace rocksdb;
 
+  Rcpp::class_<OptionsWrapper>("Options")
+    .constructor()
+    .method("increaseParallelism", &OptionsWrapper::increaseParallelism)
+    .method("optimizeLevelStyleCompaction", &OptionsWrapper::optimizeLevelStyleCompaction)
+    .method("createIfMissing", &OptionsWrapper::createIfMissing)
+    .method("createMissingColumnFamilies", &OptionsWrapper::createMissingColumnFamilies)
+    .method("errorIfExists", &OptionsWrapper::errorIfExists)
+    .method("paranoidChecks", &OptionsWrapper::paranoidChecks)
+    .method("setFixedPrefixTransform", &OptionsWrapper::setFixedPrefixTransform)
+    .method("setCappedPrefixTransform", &OptionsWrapper::setCappedPrefixTransform)
+    .method("setNoopTransform", &OptionsWrapper::setNoopTransform);
+
   Rcpp::class_<Status>("Status")
   .method("ok", &Status::ok)
   .method("isNotFound", &Status::IsNotFound)
@@ -28,6 +40,7 @@ RCPP_MODULE(rrocksdb) {
   ;
 
   Rcpp::class_<DBWrapper>("DB")
+  .constructor<std::string, OptionsWrapper&>()
   .constructor<std::string>()
   .method("createColumnFamily", &DBWrapper::createColumnFamily)
   .method("put", &DBWrapper::put, "Put data into RocksDB")
@@ -53,6 +66,7 @@ RCPP_MODULE(rrocksdb) {
   .method("valid", &IteratorWrapper::valid)
   .method("seekToFirst", &IteratorWrapper::seekToFirst)
   .method("seekToLast", &IteratorWrapper::seekToLast)
+  .method("seek", &IteratorWrapper::seek)
   .method("moveNext", &IteratorWrapper::next)
   .method("movePrev", &IteratorWrapper::prev)
   .property("key", &IteratorWrapper::key)

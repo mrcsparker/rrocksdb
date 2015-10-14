@@ -4,6 +4,7 @@
 #include <Rcpp.h>
 
 #include "rocksdb/db.h"
+#include "OptionsWrapper.h"
 #include "IteratorWrapper.h"
 #include "WriteBatchWrapper.h"
 
@@ -13,13 +14,17 @@ class DBWrapper {
 public:
 
   // open
+  DBWrapper(const std::string& dbName, OptionsWrapper& options);
+
   DBWrapper(const std::string& dbName);
+
+  Status open(const std::string& name, OptionsWrapper& options);
 
   Status createColumnFamily(std::string& name);
 
   std::string put(const std::string& key, const std::string& value);
 
-  std::string remove(const std::string& key);
+  Status remove(const std::string& key);
 
   void write(WriteBatchWrapper& batch);
 

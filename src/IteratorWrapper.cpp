@@ -17,7 +17,9 @@ void IteratorWrapper::seekToLast() {
   _iterator->SeekToLast();
 }
 
-// virtual void Seek(const Slice& target) = 0;
+void IteratorWrapper::seek(std::string& query) {
+  _iterator->Seek(query);
+}
 
 void IteratorWrapper::next() {
   _iterator->Next();

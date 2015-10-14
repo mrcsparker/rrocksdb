@@ -1,6 +1,7 @@
 #ifndef __RROCKSDB_TYPES_H__
 #define __RROCKSDB_TYPES_H__
 
+#include "OptionsWrapper.h"
 #include "DBWrapper.h"
 #include "WriteBatchWrapper.h"
 #include "IteratorWrapper.h"

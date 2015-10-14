@@ -1,20 +1,14 @@
 #include <Rcpp.h>
+#include "OptionsWrapper.h"
 #include "DBWrapper.h"
 
-DBWrapper::DBWrapper(const std::string& dbName) {
-  rocksdb::Options options;
-  // Optimize RocksDB. This is the easiest way to get RocksDB to perform well
-  options.IncreaseParallelism();
-  options.OptimizeLevelStyleCompaction();
-  // create the DB if it's not already present
-  options.create_if_missing = true;
-  // open DB
-
+DBWrapper::DBWrapper(const std::string& dbName, OptionsWrapper& options) {
   std::vector<std::string> tmpCf;
-  rocksdb::Status s = rocksdb::DB::ListColumnFamilies(options, dbName, &tmpCf);
+  rocksdb::Status s = rocksdb::DB::ListColumnFamilies(options.getOptions(), dbName, &tmpCf);
 
   if (!s.ok()) {
-    throw std::runtime_error(s.ToString());
+    open(dbName, options);
+    return;
   }
 
   std::vector<rocksdb::ColumnFamilyDescriptor> columnFamilyDescriptors;
@@ -24,11 +18,16 @@ DBWrapper::DBWrapper(const std::string& dbName) {
   }
 
   std::vector<rocksdb::ColumnFamilyHandle *> columnFamilyHandles;
-  s = rocksdb::DB::Open(options, dbName, columnFamilyDescriptors, &columnFamilyHandles, &_db);
+  s = rocksdb::DB::Open(options.getOptions(), dbName, columnFamilyDescriptors, &columnFamilyHandles, &_db);
 
   if (!s.ok()) {
     throw std::runtime_error(s.ToString());
   }
+}
+
+DBWrapper::DBWrapper(const std::string& dbName) {
+  OptionsWrapper options = OptionsWrapper::defaultOptions();
+  open(dbName, options);
 }
 
 Status DBWrapper::createColumnFamily(std::string& name) {
@@ -38,16 +37,23 @@ Status DBWrapper::createColumnFamily(std::string& name) {
   return s;
 }
 
+Status DBWrapper::open(const std::string& dbName, OptionsWrapper& options) {
+  rocksdb::Status s = rocksdb::DB::Open(options.getOptions(), dbName, &_db);
+  if (!s.ok()) {
+    throw std::runtime_error(s.ToString());
+  }
+  return s;
+}
+
 std::string DBWrapper::put(const std::string& key, const std::string& value) {
   rocksdb::Status s = _db->Put(rocksdb::WriteOptions(), key, value);
   assert(s.ok());
   return value;
 }
 
-std::string DBWrapper::remove(const std::string& key) {
+Status DBWrapper::remove(const std::string& key) {
   rocksdb::Status s = _db->Delete(rocksdb::WriteOptions(), key);
-  assert(s.ok());
-  return key;
+  return s;
 }
 
 void DBWrapper::write(WriteBatchWrapper& batch) {
