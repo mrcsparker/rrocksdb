@@ -37,7 +37,7 @@ public:
   ~OptionsWrapper();
 
 private:
-  rocksdb::Options *_options;
+  rocksdb::Options *options_;
 };
 
 RCPP_EXPOSED_CLASS(OptionsWrapper)

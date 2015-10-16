@@ -1,45 +1,47 @@
 #include "IteratorWrapper.h"
 
 IteratorWrapper::IteratorWrapper(rocksdb::Iterator *iterator) {
-  _iterator = iterator;
-  _iterator->SeekToFirst();
+  iterator_ = iterator;
+  iterator_->SeekToFirst();
 }
 
 bool IteratorWrapper::valid() {
-  return _iterator->Valid();
+  return iterator_->Valid();
 }
 
 void IteratorWrapper::seekToFirst() {
-  _iterator->SeekToFirst();
+  iterator_->SeekToFirst();
 }
 
 void IteratorWrapper::seekToLast() {
-  _iterator->SeekToLast();
+  iterator_->SeekToLast();
 }
 
 void IteratorWrapper::seek(std::string& query) {
-  _iterator->Seek(query);
+  iterator_->Seek(query);
 }
 
 void IteratorWrapper::next() {
-  _iterator->Next();
+  iterator_->Next();
 }
 
 void IteratorWrapper::prev() {
-  _iterator->Prev();
+  iterator_->Prev();
 }
 
 std::string IteratorWrapper::key() {
-  return _iterator->key().ToString();
+  return iterator_->key().ToString();
 }
 
 std::string IteratorWrapper::value() {
-  return _iterator->value().ToString();
+  return iterator_->value().ToString();
 }
 
-// virtual Status status() const = 0;
+Status IteratorWrapper::status() {
+  return iterator_->status();
+}
 
 IteratorWrapper::~IteratorWrapper() {
-  delete _iterator;
+  delete iterator_;
 }
 

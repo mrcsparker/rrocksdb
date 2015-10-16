@@ -4,7 +4,7 @@
 #include "rocksdb/table.h"
 
 OptionsWrapper::OptionsWrapper() {
-  _options = new rocksdb::Options();
+  options_ = new rocksdb::Options();
 }
 
 OptionsWrapper OptionsWrapper::defaultOptions() {
@@ -16,47 +16,47 @@ OptionsWrapper OptionsWrapper::defaultOptions() {
 }
 
 void OptionsWrapper::increaseParallelism() {
-  _options->IncreaseParallelism();
+  options_->IncreaseParallelism();
 }
 
 void OptionsWrapper::optimizeLevelStyleCompaction() {
-  _options->OptimizeLevelStyleCompaction();
+  options_->OptimizeLevelStyleCompaction();
 }
 
 void OptionsWrapper::createIfMissing(const bool& v) {
-  _options->create_if_missing = v;
+  options_->create_if_missing = v;
 }
 
 void OptionsWrapper::createMissingColumnFamilies(const bool& v) {
-  _options->create_missing_column_families = v;
+  options_->create_missing_column_families = v;
 }
 
 void OptionsWrapper::errorIfExists(const bool& v) {
-  _options->error_if_exists = v;
+  options_->error_if_exists = v;
 }
 
 void OptionsWrapper::paranoidChecks(const bool& v) {
-  _options->paranoid_checks = v;
+  options_->paranoid_checks = v;
 }
 
 void OptionsWrapper::setFixedPrefixTransform(const size_t& length) {
-  _options->prefix_extractor.reset(rocksdb::NewFixedPrefixTransform(length));
+  options_->prefix_extractor.reset(rocksdb::NewFixedPrefixTransform(length));
 }
 
 void OptionsWrapper::setCappedPrefixTransform(const size_t& length) {
-  _options->prefix_extractor.reset(rocksdb::NewCappedPrefixTransform(length));
+  options_->prefix_extractor.reset(rocksdb::NewCappedPrefixTransform(length));
 }
 
 void OptionsWrapper::setNoopTransform() {
-  _options->prefix_extractor.reset(rocksdb::NewNoopTransform());
+  options_->prefix_extractor.reset(rocksdb::NewNoopTransform());
 }
 
 const rocksdb::Options OptionsWrapper::getOptions() {
-  return *_options;
+  return *options_;
 }
 
 OptionsWrapper::~OptionsWrapper() {
-  delete _options;
+  delete options_;
 }
 
 

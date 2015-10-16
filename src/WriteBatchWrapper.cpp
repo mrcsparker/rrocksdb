@@ -1,34 +1,34 @@
 #include "WriteBatchWrapper.h"
 
 WriteBatchWrapper::WriteBatchWrapper() {
-  _batch = new rocksdb::WriteBatch();
+  batch_ = new rocksdb::WriteBatch();
 }
 
 void WriteBatchWrapper::put(std::string& key, std::string& value) {
-  _batch->Put(key, value);
+  batch_->Put(key, value);
 }
 
 void WriteBatchWrapper::remove(std::string& key) {
-  _batch->Delete(key);
+  batch_->Delete(key);
 }
 
 void WriteBatchWrapper::merge(std::string& key, std::string& value) {
-  _batch->Merge(key, value);
+  batch_->Merge(key, value);
 }
 
 void WriteBatchWrapper::clear() {
-  _batch->Clear();
+  batch_->Clear();
 }
 
 void WriteBatchWrapper::setSavePoint() {
-  _batch->SetSavePoint();
+  batch_->SetSavePoint();
 }
 
 rocksdb::WriteBatch* WriteBatchWrapper::getBatch() {
-  return _batch;
+  return batch_;
 }
 
 WriteBatchWrapper::~WriteBatchWrapper() {
-  delete _batch;
+  delete batch_;
 }
 

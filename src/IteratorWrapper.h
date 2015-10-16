@@ -4,6 +4,8 @@
 #include <Rcpp.h>
 #include "rocksdb/db.h"
 
+using namespace rocksdb;
+
 class IteratorWrapper {
 public:
   IteratorWrapper(rocksdb::Iterator *iterator);
@@ -24,12 +26,12 @@ public:
 
   std::string value();
 
-  // virtual Status status() const = 0;
+  Status status();
 
   ~IteratorWrapper();
 
 private:
-  rocksdb::Iterator* _iterator;
+  rocksdb::Iterator* iterator_;
 };
 
 RCPP_EXPOSED_CLASS(IteratorWrapper)

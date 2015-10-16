@@ -23,7 +23,7 @@ public:
   ~WriteBatchWrapper();
 
 private:
-  rocksdb::WriteBatch* _batch;
+  rocksdb::WriteBatch* batch_;
 };
 
 RCPP_EXPOSED_CLASS(WriteBatchWrapper)

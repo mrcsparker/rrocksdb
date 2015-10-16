@@ -46,23 +46,33 @@ fakeCSV <- function() {
 
   db <- new(rrocksdb::DB, "/tmp/csv.db", options)
   db$createColumnFamily("csv")
-  db$createColumnFamily("csv_metadata")
 
-  print("loaded")
+  db$createColumnFamily("csv_index_on_id")
+  db$createColumnFamily("csv_index_on_first_name")
+  db$createColumnFamily("csv_index_on_last_name")
 
   for (i in 1:100) {
-    name = unlist(strsplit(randomNames::randomNames(), ","))
-    db$putCF("csv", paste(toString(i), ":", "1", ":", "id", sep = ""), toString(i))
-    db$putCF("csv", paste(toString(i), ":", "2", ":","first_name", sep = ""), name[2])
-    db$putCF("csv", paste(toString(i), ":", "3", ":", "last_name", sep = ""), name[1])
+    name = unlist(strsplit(randomNames::randomNames(), ", "))
+
+    idKey = sprintf("%d:%d:%d:id", i, 1, i)
+    firstNameKey = sprintf("%d:%d:%s:first_name", i, 1, name[2])
+    lastNameKey = sprintf("%d:%d:%s:last_name", i, 1, name[1])
+
+    db$putCF("csv_index_on_id", toString(i), idKey)
+    db$putCF("csv_index_on_first_name", name[2], firstNameKey)
+    db$putCF("csv_index_on_last_name", name[1], lastNameKey)
+
+    db$putCF("csv", idKey, toString(i))
+    db$putCF("csv", firstNameKey, name[2])
+    db$putCF("csv", lastNameKey, name[1])
   }
 
-  iterator <- db$iterator()
+  iterator <- db$iteratorCF("csv")
   iterator$seek("1:")
   while (iterator$valid()) {
-    if (match(iterator$key, "(.*):(.*):last_name") && match(iterator$value, "Lee")) {
+    #if (regexMatch(iterator$key, "(.*):(.*):last_name")) {
       print(paste(iterator$key, ":", iterator$value))
-    }
+    #}
     iterator$moveNext()
   }
 }

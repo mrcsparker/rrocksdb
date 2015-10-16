@@ -6,8 +6,13 @@ using namespace Rcpp;
 
 // [[Rcpp::plugins(cpp11)]]
 
+//' @title C++ regex_match wrapper
+//' @name regexMatch
+//' @return string
+//' @examples
+//' regexMatch("1:2:last_name", "(.*):(.*):last_name")
 // [[Rcpp::export]]
-bool match(std::string s, std::string m) {
+bool regexMatch(std::string s, std::string m) {
   std::regex reg(m);
   return std::regex_match(s, reg);
 }
@@ -64,6 +69,8 @@ RCPP_MODULE(rrocksdb) {
   .method("getWithColumnFamily", &DBWrapper::getWithColumnFamily, "Get data from RocksDB")
   .method("getCF", &DBWrapper::getWithColumnFamily, "Get data from RocksDB")
   .method("iterator", &DBWrapper::newIterator, "Create iterator")
+  .method("iteratorWithColumnFamily", &DBWrapper::newIteratorWithColumnFamily, "Create iterator")
+  .method("iteratorCF", &DBWrapper::newIteratorWithColumnFamily, "Create iterator")
   .method("getName", &DBWrapper::getName)
   ;
 
@@ -86,6 +93,7 @@ RCPP_MODULE(rrocksdb) {
   .method("movePrev", &IteratorWrapper::prev)
   .property("key", &IteratorWrapper::key)
   .property("value", &IteratorWrapper::value)
+  .property("status", &IteratorWrapper::status)
   ;
 
 }
