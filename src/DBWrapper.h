@@ -1,6 +1,8 @@
 #ifndef __DB_H__
 #define __DB_H__
 
+#include <unordered_map>
+#include <utility>
 #include <Rcpp.h>
 
 #include "rocksdb/db.h"
@@ -14,27 +16,27 @@ class DBWrapper {
 public:
 
   // open
-  DBWrapper(const std::string& dbName, OptionsWrapper& options);
+  DBWrapper(std::string dbName, OptionsWrapper& options);
 
-  DBWrapper(const std::string& dbName);
+  DBWrapper(std::string dbName);
 
-  Status open(const std::string& name, OptionsWrapper& options);
+  Status open(std::string name, OptionsWrapper& options);
 
-  Status createColumnFamily(std::string& name);
+  Status createColumnFamily(std::string name);
 
-  std::string put(const std::string& key, const std::string& value);
+  std::string put(std::string key, std::string value);
 
-  std::string putWithColumnFamily(const std::string& columnFamilyName, const std::string& key, const std::string& value);
+  std::string putWithColumnFamily(std::string columnFamilyName, std::string key, std::string value);
 
-  Status remove(const std::string& key);
+  Status remove(std::string key);
 
-  Status removeWithColumnFamily(const std::string& columnFamilyName, const std::string& key);
+  Status removeWithColumnFamily(std::string columnFamilyName, std::string key);
 
   Status write(WriteBatchWrapper& batch);
 
-  std::string get(const std::string& key);
+  std::string get(std::string key);
 
-  std::string getWithColumnFamily(const std::string& columnFamilyName, const std::string& key);
+  std::string getWithColumnFamily(std::string columnFamilyName, std::string key);
 
   IteratorWrapper* newIterator();
 
@@ -49,7 +51,7 @@ private:
   rocksdb::ColumnFamilyHandle* getColumnFamilyHandle_(const std::string& columnFamilyName);
 
   rocksdb::DB* db_;
-  std::unordered_map<std::string, rocksdb::ColumnFamilyHandle *> columnFamilies_;
+  std::unordered_map<std::string, rocksdb::ColumnFamilyHandle*> columnFamilies_;
 };
 
 
