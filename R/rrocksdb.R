@@ -6,8 +6,6 @@
 
 loadModule("rrocksdb", TRUE)
 
-require(randomNames)
-
 runRRocksDB <- function() {
 
   db <- new(rrocksdb::DB, "/tmp/foo.db")

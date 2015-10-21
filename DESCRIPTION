@@ -1,13 +1,13 @@
 Package: rrocksdb
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Title: R interface to RocksDB
+Version: 0.5.0
+Author: Chris Parker
+Maintainer: Chris Parker <mrcsparker@gmail.com>
+Description: R interface to RocksDB
+License: LGPL-3
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.1)
 LinkingTo:
-    Rcpp, RApiSerialize, randomNames
+    Rcpp, RApiSerialize
