@@ -21,6 +21,10 @@ void IteratorWrapper::seek(std::string& query) {
   iterator_->Seek(query);
 }
 
+void IteratorWrapper::seekForPrev(std::string& query) {
+  iterator_->SeekForPrev(query);
+}
+
 void IteratorWrapper::next() {
   iterator_->Next();
 }

@@ -18,6 +18,8 @@ public:
 
   void seek(std::string& query);
 
+  void seekForPrev(std::string& query);
+
   void next();
 
   void prev();
